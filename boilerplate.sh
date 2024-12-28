@@ -27,3 +27,5 @@ fn main() {
     let contents = fs::read_to_string(file_path).expect("Should have been able to read the file");
 }
 EOL
+
+code src/main.rs
