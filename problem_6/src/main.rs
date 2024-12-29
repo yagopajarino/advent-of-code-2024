@@ -137,57 +137,6 @@ fn parse_input(file_path: &String) -> Map {
     }
 }
 
-fn count_loop_obstructions(map: &mut Map, guard: &mut Guard) -> usize {
-    let mut valid_positions = 0;
-
-    // Iterate over all positions to find open spots
-    for pos in &mut map.positions {
-        // Skip if the position is already blocked or is the starting position
-        if pos.is_blocked || pos.was_visited {
-            continue;
-        }
-
-        // Temporarily place an obstruction
-        pos.is_blocked = true;
-
-        // Reset guard's state for simulation
-        let mut test_guard = Guard {
-            current_position: pos.clone(), // Clone to avoid mutable reference issues
-            heading: guard.heading.clone(),
-            map: &mut map.clone(),
-            visited_locations: HashSet::new(),
-        };
-
-        let mut visited_states = HashSet::new();
-        let mut loop_detected = false;
-
-        loop {
-            let state = (
-                test_guard.current_position.x,
-                test_guard.current_position.y,
-                test_guard.heading.clone(),
-            );
-            if !visited_states.insert(state) {
-                loop_detected = true;
-                break;
-            }
-            test_guard.next();
-            if test_guard.is_on_map_limit() {
-                break;
-            }
-        }
-
-        if loop_detected {
-            valid_positions += 1;
-        }
-
-        // Remove the temporary obstruction
-        pos.is_blocked = false;
-    }
-
-    valid_positions
-}
-
 fn main() {
     let args = env::args().collect::<Vec<String>>();
     let file_path: &String = &args[1];
